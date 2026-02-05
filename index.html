@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Typing Notes</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f2f2f7">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+
+<body>
+    <div id="status-badge" class="status-badge">Saved</div>
+    <div id="app">
+        <!-- Home Screen -->
+        <section id="home-screen" class="screen active">
+            <div class="container">
+                <header>
+                    <h1 id="welcome-message" class="fade-in">Hey there, what's up?</h1>
+                </header>
+                <div id="last-session-summary" class="history-preview"></div>
+                <main>
+                    <button id="new-note-btn" class="primary-btn">New Note</button>
+                    <button id="settings-btn" class="text-btn">Settings</button>
+                </main>
+            </div>
+        </section>
+
+        <!-- Settings Screen -->
+        <section id="settings-screen" class="screen">
+            <div class="settings-container">
+                <header class="settings-header">
+                    <button id="close-settings-btn" class="icon-btn">✕</button>
+                    <h2>Settings</h2>
+                </header>
+
+                <div class="settings-content">
+                    <div class="settings-group">
+                        <h3>General</h3>
+                        <div class="settings-row">
+                            <label>Session History</label>
+                            <input type="checkbox" id="setting-history" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Practice After Note</label>
+                            <input type="checkbox" id="setting-auto-practice" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Auto-save Note</label>
+                            <input type="checkbox" id="setting-auto-save" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Clear After Session</label>
+                            <input type="checkbox" id="setting-clear-session" class="toggle">
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Typing Practice</h3>
+                        <div class="settings-row">
+                            <label>Show WPM</label>
+                            <input type="checkbox" id="setting-show-wpm" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Show Accuracy</label>
+                            <input type="checkbox" id="setting-show-accuracy" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Auto-focus Input</label>
+                            <input type="checkbox" id="setting-autofocus" class="toggle">
+                        </div>
+                        <div class="settings-row">
+                            <label>Disable Paste</label>
+                            <input type="checkbox" id="setting-disable-paste" class="toggle">
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Appearance</h3>
+                        <div class="settings-row">
+                            <label>Theme</label>
+                            <select id="setting-theme" class="select-input">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="system">System Default</option>
+                            </select>
+                        </div>
+                        <div class="settings-row">
+                            <label>Font Size</label>
+                            <select id="setting-font-size" class="select-input">
+                                <option value="small">Small</option>
+                                <option value="medium">Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                        <div class="settings-row">
+                            <label>Smooth Animations</label>
+                            <input type="checkbox" id="setting-animations" class="toggle">
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Power User</h3>
+                        <div class="settings-row">
+                            <label>Keyboard Shortcuts</label>
+                            <input type="checkbox" id="setting-shortcuts" class="toggle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Editor Screen -->
+        <section id="editor-screen" class="screen">
+            <div class="full-editor">
+                <textarea id="note-textarea"
+                    placeholder="Write anything — notes, links, references, diagrams (text-based for now)"></textarea>
+                <div class="editor-actions">
+                    <button id="end-session-btn" class="secondary-btn">End Session</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Screen -->
+        <section id="summary-screen" class="screen">
+            <div class="container">
+                <div class="summary-card">
+                    <h2 id="summary-title">Session Ended</h2>
+                    <p id="summary-subtitle">Your note has been saved. Ready to practice?</p>
+                    <div id="note-meta" class="note-meta">
+                        <span id="word-count">0 words</span>
+                        <span>•</span>
+                        <span id="read-time">0 min read</span>
+                    </div>
+
+                    <div id="result-display" class="result-stats" style="display: none;">
+                        <div id="final-wpm-container" class="stat-box">
+                            <span id="final-wpm">0</span>
+                            <label>WPM</label>
+                        </div>
+                        <div id="final-accuracy-container" class="stat-box">
+                            <span id="final-accuracy">0</span>%
+                            <label>Accuracy</label>
+                        </div>
+                    </div>
+
+                    <button id="practice-btn" class="primary-btn">Practice Typing This Note</button>
+                    <button id="back-home-btn" class="text-btn">Back to Home</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Screen -->
+        <section id="practice-screen" class="screen">
+            <div class="practice-container">
+                <div id="reference-text" class="reference-section"></div>
+                <div class="practice-input-area">
+                    <textarea id="practice-textarea" placeholder="Start typing here..."></textarea>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat">Speed: <span id="wpm">0</span> WPM</div>
+                    <div class="stat">Accuracy: <span id="accuracy">100</span>%</div>
+                </div>
+                <div class="practice-actions">
+                    <button id="finish-practice-btn" class="secondary-btn">Finish Practice</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
