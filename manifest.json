@@ -1,11 +1,29 @@
 {
+  "id": "com.typingnotes.pwa",
   "name": "Typing Notes",
   "short_name": "Typing",
   "description": "A premium iOS-style app for taking notes and practicing typing speed.",
+  "lang": "en-US",
+  "dir": "ltr",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "tabbed",
+    "standalone"
+  ],
+  "orientation": "portrait",
   "background_color": "#f2f2f7",
   "theme_color": "#007aff",
+  "categories": [
+    "productivity",
+    "education",
+    "utilities"
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "none",
   "icons": [
     {
       "src": "icon.svg",
@@ -22,6 +40,99 @@
       "src": "icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Note",
+      "url": "./index.html?action=new",
+      "description": "Start a new typing session",
+      "icons": [
+        {
+          "src": "icon.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "url": "./index.html?action=settings",
+      "description": "Open app settings",
+      "icons": [
+        {
+          "src": "icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "file_handlers": [
+    {
+      "action": "./index.html",
+      "accept": {
+        "text/plain": [
+          ".txt",
+          ".md"
+        ],
+        "application/json": [
+          ".json"
+        ]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+typingnotes",
+      "url": "./index.html?url=%s"
+    }
+  ],
+  "note_handler": {
+    "new_note_url": "./index.html?action=new"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "widgets": [
+    {
+      "name": "Last Session",
+      "description": "Shows your latest WPM and accuracy",
+      "tag": "last-session",
+      "template": "widget-template",
+      "ms_ac_template": "{ \"type\": \"AdaptiveCard\", \"body\": [{ \"type\": \"TextBlock\", \"text\": \"Last Session\" }] }",
+      "icons": [
+        {
+          "src": "icon.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "App Home Screen"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Desktop View"
     }
   ]
 }

@@ -1,6 +1,6 @@
 /**
  * Typing Notes - Core Application Logic
- * v1.4.0 - Visual Practice & Precise Feedback
+ * v1.5.0 - Expert PWA Integration
  */
 
 const App = {
@@ -86,6 +86,11 @@ const App = {
         this.loadSessions();
         this.bindEvents();
         this.applySettings();
+
+        // PWA Integration
+        this.handlePWAEntryPoints();
+        this.registerAdvancedPWAFeatures();
+
         this.showScreen('home-screen');
     },
 
@@ -168,6 +173,60 @@ const App = {
         window.addEventListener('keydown', (e) => this.handleShortcuts(e));
     },
 
+    // PWA Integration Features
+    async handlePWAEntryPoints() {
+        const params = new URLSearchParams(window.location.search);
+
+        // 1. Handle Shortcuts / Action Parameters
+        if (params.has('action')) {
+            const action = params.get('action');
+            if (action === 'new') {
+                setTimeout(() => this.elements.homeBtn.click(), 500);
+            } else if (action === 'settings') {
+                setTimeout(() => this.elements.settingsBtn.click(), 500);
+            }
+        }
+
+        // 2. Handle Share Target
+        if (params.has('text') || params.has('title') || params.has('url')) {
+            const sharedText = [
+                params.get('title'),
+                params.get('text'),
+                params.get('url')
+            ].filter(Boolean).join('\n');
+
+            this.elements.noteTextarea.value = sharedText;
+            this.elements.homeBtn.click();
+        }
+
+        // 3. Handle File Activation (Launch Queue)
+        if ('launchQueue' in window) {
+            window.launchQueue.setConsumer(async (launchParams) => {
+                if (launchParams.files.length > 0) {
+                    const fileHandle = launchParams.files[0];
+                    const file = await fileHandle.getFile();
+                    const content = await file.text();
+                    this.elements.noteTextarea.value = content;
+                    this.showScreen('editor-screen');
+                }
+            });
+        }
+    },
+
+    async registerAdvancedPWAFeatures() {
+        // Periodic Background Sync registration
+        if ('serviceWorker' in navigator && 'periodicSync' in navigator) {
+            const registration = await navigator.serviceWorker.ready;
+            try {
+                await registration.periodicSync.register('refresh-history', {
+                    minInterval: 24 * 60 * 60 * 1000 // Once a day
+                });
+            } catch (e) {
+                console.log('Periodic sync could not be registered:', e);
+            }
+        }
+    },
+
     // Settings Logic
     loadSettings() {
         const saved = localStorage.getItem('typing_settings_v1');
@@ -227,7 +286,6 @@ const App = {
         if (!this.state.settings.shortcutsEnabled) return;
 
         const isModifier = e.ctrlKey || e.metaKey;
-        const activeTag = document.activeElement.tagName;
 
         if (e.key === 'Escape') {
             if (document.getElementById('settings-screen').classList.contains('active')) {
@@ -287,7 +345,7 @@ const App = {
     prepareSummary(isPostPractice) {
         const text = this.state.currentNote;
         const words = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
-        const readTime = Math.ceil(words / 200); // Average reading speed
+        const readTime = Math.ceil(words / 200);
 
         this.elements.wordCount.textContent = `${words} word${words !== 1 ? 's' : ''}`;
         this.elements.readTime.textContent = `${readTime} min read`;
@@ -317,7 +375,7 @@ const App = {
         if (silent) {
             this.elements.statusBadge.style.display = 'block';
             this.elements.statusBadge.style.opacity = '1';
-            setTimeout(() => { this.elements.statusBadge.style.opacity = '0'; }, 1000);
+            setTimeout(() => { if (this.elements.statusBadge) this.elements.statusBadge.style.opacity = '0'; }, 1000);
         }
     },
 
@@ -392,24 +450,17 @@ const App = {
             this.state.lastWpmUpdate = Date.now();
         }
 
-        // Precise character highlighting
         for (let i = 0; i < spans.length; i++) {
             const charSpan = spans[i];
             charSpan.classList.remove('char-correct', 'char-incorrect', 'char-current');
-
             if (i < input.length) {
-                if (input[i] === target[i]) {
-                    charSpan.classList.add('char-correct');
-                } else {
-                    charSpan.classList.add('char-incorrect');
-                }
+                if (input[i] === target[i]) charSpan.classList.add('char-correct');
+                else charSpan.classList.add('char-incorrect');
             } else if (i === input.length) {
                 charSpan.classList.add('char-current');
-                // Auto-scroll logic
                 charSpan.scrollIntoView({ block: 'center', behavior: 'smooth' });
             }
         }
-
         this.updateStats(input, target);
         if (input.length >= target.length && Math.round((this.getCorrectChars(input, target) / input.length) * 100) === 100) {
             this.elements.finishPracticeBtn.click();
