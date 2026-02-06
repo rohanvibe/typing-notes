@@ -123,7 +123,7 @@
       "url": "./index.html?url=%s"
     }
   ],
-  "note_handler": {
+  "note_taking": {
     "new_note_url": "./index.html?action=new"
   },
   "edge_side_panel": {

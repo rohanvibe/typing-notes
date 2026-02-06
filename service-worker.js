@@ -7,7 +7,8 @@ const ASSETS = [
     './manifest.json',
     './icon.svg',
     './icon-192.png',
-    './icon-512.png'
+    './icon-512.png',
+    './offline.html'
 ];
 
 /**
@@ -41,20 +42,44 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Cache-First with Network Fallback for static assets
+// Cache-First for static assets, Network-First for API/Data
 self.addEventListener('fetch', (event) => {
+    // Strategy: Cache First for Static Assets (CSS, JS, Images, Fonts, App Shell)
+    if (event.request.destination === 'style' ||
+        event.request.destination === 'script' ||
+        event.request.destination === 'image' ||
+        event.request.destination === 'font' ||
+        ASSETS.includes(new URL(event.request.url).pathname)) {
+
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                return cachedResponse || fetch(event.request);
+            })
+        );
+        return;
+    }
+
+    // Strategy: Network First for API/Data/Navigation
+    // (Trying to get fresh content first, falling back to cache, then offline page)
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).then((fetchResponse) => {
-                // Optionally cache new requests dynamically
-                return fetchResponse;
-            });
-        }).catch(() => {
-            // Offline fallback for main page if everything fails
-            if (event.request.mode === 'navigate') {
-                return caches.match('./index.html');
-            }
-        })
+        fetch(event.request)
+            .then((response) => {
+                // Return response and optionally cache it (if you wanted runtime caching)
+                return response;
+            })
+            .catch(() => {
+                // Network failed, try cache
+                return caches.match(event.request)
+                    .then((cachedResponse) => {
+                        if (cachedResponse) {
+                            return cachedResponse;
+                        }
+                        // Fallback to offline.html for navigation requests
+                        if (event.request.mode === 'navigate') {
+                            return caches.match('./offline.html');
+                        }
+                    });
+            })
     );
 });
 
