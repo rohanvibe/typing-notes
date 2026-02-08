@@ -22,7 +22,7 @@ const App = {
             showWpm: true,
             showAccuracy: true,
             autofocus: true,
-            disablePaste: true,
+            disablePaste: false,
             theme: 'system',
             fontSize: 'medium',
             animations: true,
