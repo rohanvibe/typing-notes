@@ -1,10 +1,9 @@
-const CACHE_NAME = 'typing-notes-v2-core';
 const ASSETS = [
     './',
     './index.html',
+    './manifest.json',
     './icon-192.png',
-    './icon-512.png',
-    './manifest.json'
+    './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
