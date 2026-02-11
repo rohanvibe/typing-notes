@@ -1,2 +1,0 @@
-
-(Content same as original style.css, this step is just to effectively rename by creating new and deleting old if I had delete tool, but I don't see delete tool.  Wait, I can just use run_command to move/rename, which is cleaner.)
